@@ -13,14 +13,14 @@ using System.Threading.Tasks;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace OddScrapperService.Scrappers.Services.BettingSites;
-internal class SportingBetScrapper(ILogger<SportingBetScrapper> logger, IConfiguration configuration) : BackgroundService, IScrapper
+internal class SportingBetScrapper(ILogger<SportingBetScrapper> logger, IConfiguration configuration) : IScrapper
 {
 
     readonly ILogger<SportingBetScrapper> _logger = logger;
     readonly IConfiguration _configuration = configuration;
 
 
-    public void Process1x2(ChromeDriver driver)
+    public void Process1x2(ChromeDriver driver)                             
     {
         var elementsReturned = driver.FindElements(By.ClassName("grid-event"));
 
@@ -95,19 +95,6 @@ internal class SportingBetScrapper(ILogger<SportingBetScrapper> logger, IConfigu
         }
 
         return null;
-    }
-
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        while (!stoppingToken.IsCancellationRequested)
-        {
-            if (_logger.IsEnabled(LogLevel.Information))
-            {
-                await GetFootballOddsAsync();
-                _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-            }
-            await Task.Delay(15000, stoppingToken);
-        }
     }
 }
 
